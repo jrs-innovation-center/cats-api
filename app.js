@@ -93,10 +93,20 @@ app.put('/cats/:id', function(req, res, next) {
     )
   }
 
-  dal.updateCat(requestBodyCat, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(200).send(data)
-  })
+  // dal.updateCat(requestBodyCat, function(err, data) {
+  //   if (err) return next(new HTTPError(err.status, err.message, err))
+  //   res.status(200).send(data)
+  // })
+
+  dal
+    .updateCat2(requestBodyCat)
+    .then(function(response) {
+      res.status(200).send(response)
+    })
+    .catch(function(err) {
+      console.log(err)
+      return next(new HTTPError(err.status, err.message, err))
+    })
 })
 
 // DELETE -  DELETE /cats/:id

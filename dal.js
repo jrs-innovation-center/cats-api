@@ -41,6 +41,10 @@ const addCat = (cat, callback) => {
 }
 const getCat = (catId, callback) => get(catId, callback)
 const updateCat = (updatedCat, callback) => update(updatedCat, callback)
+const updateCat2 = updatedCat => {
+  return update2(updatedCat)
+}
+
 const deleteCat = (catId, callback) => deleteDoc(catId, callback)
 
 const listCats = (lastItem, filter, limit, callback) => {
@@ -128,6 +132,10 @@ function update(doc, callback) {
   })
 }
 
+function update2(doc) {
+  return db.put(doc)
+}
+
 function deleteDoc(id, callback) {
   db
     .get(id)
@@ -178,6 +186,7 @@ const dal = {
   getCat,
   deleteCat,
   updateCat,
+  updateCat2,
   addBreed,
   getBreed,
   updateBreed,

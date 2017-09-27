@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test tape test/**/*-test.js | faucet",
+    "test": "NODE_ENV=test tape test/**/*-test.js",
     "testVerbose": "NODE_ENV=test tape test/**/*-test.js",
     "start": "node app.js",
     "load": "node load-data.js",
