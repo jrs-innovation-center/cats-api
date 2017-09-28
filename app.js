@@ -35,30 +35,22 @@ app.post('/cats', function(req, res, next) {
     )
   }
 
-  if (path(['body', 'type'], req) != 'cat') {
+  if (path(['body', 'type'], req) !== 'cat') {
     return next(new HTTPError(400, "'type' field value must be equal to 'cat'"))
   }
 
   dal
     .addCat(prop('body', req))
-    .then(function(response) {
-      res.status(201).send(response)
-    })
-    .catch(function(err) {
-      return next(new HTTPError(err.status, err.message, err))
-    })
+    .then(addedCat => res.status(201).send(addedCat))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 // READ - GET /cats/:id
 app.get('/cats/:id', function(req, res, next) {
-  dal.getCat(req.params.id, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    if (data) {
-      res.status(200).send(data)
-    } else {
-      next(new HTTPError(404, 'Not Found', { path: req.path }))
-    }
-  })
+  dal
+    .getCat(path(['params', 'id'], req))
+    .then(cat => res.status(200).send(cat))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 //   UPDATE -  PUT /cats/:id
@@ -99,8 +91,8 @@ app.put('/cats/:id', function(req, res, next) {
 
   dal
     .updateCat(requestBodyCat)
-    .then(function(response) {
-      res.status(200).send(response)
+    .then(function(updatedCat) {
+      res.status(200).send(updatedCat)
     })
     .catch(function(err) {
       return next(new HTTPError(err.status, err.message, err))
@@ -172,8 +164,8 @@ app.post('/breeds', function(req, res, next) {
 
   dal
     .addBreed(prop('body', req))
-    .then(function(response) {
-      res.status(201).send(response)
+    .then(function(addedBreed) {
+      res.status(201).send(addedBreed)
     })
     .catch(function(err) {
       return next(new HTTPError(err.status, err.message, err))
@@ -182,17 +174,18 @@ app.post('/breeds', function(req, res, next) {
 
 // READ - GET /breeds/:id
 app.get('/breeds/:id', function(req, res, next) {
-  dal.getBreed(req.params.id, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    if (data) {
-      res.status(200).send(data)
-    } else {
-      next(new HTTPError(404, 'Not Found', { path: req.path }))
-    }
-  })
-})
-// UPDATE - PUT /breeds/:id   (Hint: need a req.body)
+  const id = path(['params', 'id'], req)
+  console.log('breed id', id)
 
+  dal
+    .getBreed(id)
+    .then(function(breed) {
+      res.status(200).send(breed)
+    })
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
+})
+
+// UPDATE - PUT /breeds/:id   (Hint: need a req.body)
 app.put('/breeds/:id', function(req, res, next) {
   const breedId = req.params.id
   const requestBodyBreed = propOr('no body', 'body', req)
