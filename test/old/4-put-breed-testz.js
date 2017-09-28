@@ -1,7 +1,7 @@
 const test = require('tape')
 const request = require('supertest')
 const app = require('../../app.js')
-const { prop, compose, omit, merge, __ } = require('ramda')
+const { prop, compose, omit, merge, __, path } = require('ramda')
 
 // body
 

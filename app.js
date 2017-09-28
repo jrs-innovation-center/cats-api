@@ -93,18 +93,12 @@ app.put('/cats/:id', function(req, res, next) {
     )
   }
 
-  // dal.updateCat(requestBodyCat, function(err, data) {
-  //   if (err) return next(new HTTPError(err.status, err.message, err))
-  //   res.status(200).send(data)
-  // })
-
   dal
-    .updateCat2(requestBodyCat)
+    .updateCat(requestBodyCat)
     .then(function(response) {
       res.status(200).send(response)
     })
     .catch(function(err) {
-      console.log(err)
       return next(new HTTPError(err.status, err.message, err))
     })
 })
@@ -112,10 +106,8 @@ app.put('/cats/:id', function(req, res, next) {
 // DELETE -  DELETE /cats/:id
 app.delete('/cats/:id', function(req, res, next) {
   const catId = req.params.id
-  console.log('cat id: ', catId)
   dal.deleteCat(catId, function(err, data) {
     if (err) return next(new HTTPError(err.status, err.message, err))
-
     res.status(200).send(data)
   })
 })
@@ -171,7 +163,7 @@ app.post('/breeds', function(req, res, next) {
 
   dal.addBreed(req.body, function(err, data) {
     if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(200).send(data)
+    res.status(201).send(data)
   })
 })
 
@@ -223,11 +215,20 @@ app.put('/breeds/:id', function(req, res, next) {
       )
     )
   }
+  //
+  // dal.updateBreed(requestBodyBreed, function(err, data) {
+  //   if (err) return next(new HTTPError(err.status, err.message, err))
+  //   res.status(200).send(data)
+  // })
 
-  dal.updateBreed(requestBodyBreed, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(200).send(data)
-  })
+  dal
+    .updateBreed(requestBodyBreed)
+    .then(function(response) {
+      res.status(200).send(response)
+    })
+    .catch(function(err) {
+      return next(new HTTPError(err.status, err.message, err))
+    })
 })
 
 // DELETE - DELETE /breeds/:id

@@ -31,6 +31,12 @@ const {
   prop
 } = require('ramda')
 
+////////////////////////
+//     HELPERS
+////////////////////////
+
+const update = doc => db.put(doc)
+
 //////////////////////
 //      CATS
 //////////////////////
@@ -40,13 +46,8 @@ const addCat = (cat, callback) => {
   add(cat, callback)
 }
 const getCat = (catId, callback) => get(catId, callback)
-const updateCat = (updatedCat, callback) => update(updatedCat, callback)
-const updateCat2 = updatedCat => {
-  return update2(updatedCat)
-}
-
+const updateCat = updatedCat => update(updatedCat)
 const deleteCat = (catId, callback) => deleteDoc(catId, callback)
-
 const listCats = (lastItem, filter, limit, callback) => {
   var query = {}
 
@@ -90,7 +91,7 @@ const addBreed = (breed, callback) => {
   add(breed, callback)
 }
 const getBreed = (breedId, callback) => get(breedId, callback)
-const updateBreed = (updatedBreed, callback) => update(updatedBreed, callback)
+const updateBreed = updatedBreed => update(updatedBreed)
 const deleteBreed = (breedId, callback) => deleteDoc(breedId, callback)
 
 const listBreeds = (lastItem, limit, callback) => {
@@ -125,16 +126,12 @@ function get(id, callback) {
   })
 }
 
-function update(doc, callback) {
-  db.put(doc, function(err, doc) {
-    if (err) callback(err)
-    callback(null, doc)
-  })
-}
-
-function update2(doc) {
-  return db.put(doc)
-}
+// function update(doc, callback) {
+//   db.put(doc, function(err, doc) {
+//     if (err) callback(err)
+//     callback(null, doc)
+//   })
+// }
 
 function deleteDoc(id, callback) {
   db
@@ -186,13 +183,11 @@ const dal = {
   getCat,
   deleteCat,
   updateCat,
-  updateCat2,
   addBreed,
   getBreed,
   updateBreed,
   deleteBreed,
-  listBreeds,
-  nukeDocs
+  listBreeds
 }
 
 module.exports = dal
