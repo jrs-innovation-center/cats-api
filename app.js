@@ -6,7 +6,7 @@ const dal = require('./dal.js')
 const port = process.env.PORT || 4000
 const HTTPError = require('node-http-error')
 const bodyParser = require('body-parser')
-const { pathOr, keys, difference, path } = require('ramda')
+const { pathOr, keys, difference, path, prop, propOr } = require('ramda')
 
 const checkRequiredFields = require('./lib/check-required-fields')
 
@@ -24,7 +24,7 @@ app.get('/', function(req, res, next) {
 app.post('/cats', function(req, res, next) {
   const arrFieldsFailedValidation = checkRequiredFields(
     ['type', 'name', 'ownerId'],
-    req.body
+    prop('body', req)
   )
 
   if (arrFieldsFailedValidation.length > 0) {
@@ -39,10 +39,14 @@ app.post('/cats', function(req, res, next) {
     return next(new HTTPError(400, "'type' field value must be equal to 'cat'"))
   }
 
-  dal.addCat(req.body, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(201).send(data)
-  })
+  dal
+    .addCat(prop('body', req))
+    .then(function(response) {
+      res.status(201).send(response)
+    })
+    .catch(function(err) {
+      return next(new HTTPError(err.status, err.message, err))
+    })
 })
 
 // READ - GET /cats/:id
@@ -105,7 +109,7 @@ app.put('/cats/:id', function(req, res, next) {
 
 // DELETE -  DELETE /cats/:id
 app.delete('/cats/:id', function(req, res, next) {
-  const catId = req.params.id
+  const catId = path(['params', 'id'], req)
   dal.deleteCat(catId, function(err, data) {
     if (err) return next(new HTTPError(err.status, err.message, err))
     res.status(200).send(data)
@@ -133,11 +137,11 @@ app.get('/cats', function(req, res, next) {
 /////////////////////////
 //      BREEDS
 /////////////////////////
-// CREATE - POST /breeds  (Hint: need a req.body)
+// CREATE - POST /breeds
 app.post('/breeds', function(req, res, next) {
   const arrFieldsFailedValidation = checkRequiredFields(
     ['type', 'breed', 'desc'],
-    req.body
+    prop('body', req)
   )
 
   if (arrFieldsFailedValidation.length > 0) {
@@ -161,10 +165,19 @@ app.post('/breeds', function(req, res, next) {
     )
   }
 
-  dal.addBreed(req.body, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(201).send(data)
-  })
+  // dal.addBreed(req.body, function(err, data) {
+  //   if (err) return next(new HTTPError(err.status, err.message, err))
+  //   res.status(201).send(data)
+  // })
+
+  dal
+    .addBreed(prop('body', req))
+    .then(function(response) {
+      res.status(201).send(response)
+    })
+    .catch(function(err) {
+      return next(new HTTPError(err.status, err.message, err))
+    })
 })
 
 // READ - GET /breeds/:id
@@ -182,7 +195,7 @@ app.get('/breeds/:id', function(req, res, next) {
 
 app.put('/breeds/:id', function(req, res, next) {
   const breedId = req.params.id
-  const requestBodyBreed = pathOr('no body', ['body'], req)
+  const requestBodyBreed = propOr('no body', 'body', req)
 
   if (requestBodyBreed === 'no body') {
     return next(new HTTPError(400, 'Missing breed json in request body.'))

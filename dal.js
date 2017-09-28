@@ -36,14 +36,15 @@ const {
 ////////////////////////
 
 const update = doc => db.put(doc)
+const add = doc => db.put(doc)
 
 //////////////////////
 //      CATS
 //////////////////////
-const addCat = (cat, callback) => {
+const addCat = cat => {
   // example _id -- "cat_big_time_owner_333"
   cat._id = pkGenerator('cat_', trim(cat.name) + ' ' + trim(cat.ownerId))
-  add(cat, callback)
+  return add(cat)
 }
 const getCat = (catId, callback) => get(catId, callback)
 const updateCat = updatedCat => update(updatedCat)
@@ -85,10 +86,10 @@ const listCats = (lastItem, filter, limit, callback) => {
 //////////////////////
 //      BREEDS
 //////////////////////
-const addBreed = (breed, callback) => {
+const addBreed = breed => {
   // example _id -- "breed_pixie-bob"
   breed._id = pkGenerator('breed_', trim(breed.breed))
-  add(breed, callback)
+  return add(breed)
 }
 const getBreed = (breedId, callback) => get(breedId, callback)
 const updateBreed = updatedBreed => update(updatedBreed)
@@ -112,12 +113,12 @@ const listBreeds = (lastItem, limit, callback) => {
 //   })
 // }
 
-function add(doc, callback) {
-  db.put(doc, function(err, doc) {
-    if (err) callback(err)
-    callback(null, doc)
-  })
-}
+// function add(doc, callback) {
+//   db.put(doc, function(err, doc) {
+//     if (err) callback(err)
+//     callback(null, doc)
+//   })
+// }
 
 function get(id, callback) {
   db.get(id, function(err, doc) {
