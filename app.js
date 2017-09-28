@@ -54,7 +54,6 @@ app.get('/cats/:id', function(req, res, next) {
 })
 
 //   UPDATE -  PUT /cats/:id
-
 app.put('/cats/:id', function(req, res, next) {
   const catId = req.params.id
   const requestBodyCat = pathOr('no body', ['body'], req)
@@ -150,11 +149,6 @@ app.post('/breeds', function(req, res, next) {
     )
   }
 
-  // dal.addBreed(req.body, function(err, data) {
-  //   if (err) return next(new HTTPError(err.status, err.message, err))
-  //   res.status(201).send(data)
-  // })
-
   dal
     .addBreed(prop('body', req))
     .then(addedBreed => res.status(201).send(addedBreed))
@@ -205,11 +199,6 @@ app.put('/breeds/:id', function(req, res, next) {
       )
     )
   }
-  //
-  // dal.updateBreed(requestBodyBreed, function(err, data) {
-  //   if (err) return next(new HTTPError(err.status, err.message, err))
-  //   res.status(200).send(data)
-  // })
 
   dal
     .updateBreed(requestBodyBreed)
@@ -228,7 +217,6 @@ app.delete('/breeds/:id', function(req, res, next) {
 //  LIST - GET /breeds
 app.get('/breeds', function(req, res, next) {
   const limit = pathOr(10, ['query', 'limit'], req)
-
   const lastItem = pathOr(null, ['query', 'lastItem'], req)
 
   dal.listBreeds(lastItem, Number(limit), function(err, data) {
