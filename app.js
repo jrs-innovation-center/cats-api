@@ -91,21 +91,15 @@ app.put('/cats/:id', function(req, res, next) {
 
   dal
     .updateCat(requestBodyCat)
-    .then(function(updatedCat) {
-      res.status(200).send(updatedCat)
-    })
-    .catch(function(err) {
-      return next(new HTTPError(err.status, err.message, err))
-    })
+    .then(updatedCat => res.status(200).send(updatedCat))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
-// DELETE -  DELETE /cats/:id
 app.delete('/cats/:id', function(req, res, next) {
-  const catId = path(['params', 'id'], req)
-  dal.deleteCat(catId, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(200).send(data)
-  })
+  dal
+    .deleteCat(path(['params', 'id'], req))
+    .then(deletedCat => res.status(200).send(deletedCat))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 //   LIST - GET /cats
@@ -117,7 +111,6 @@ app.get('/cats', function(req, res, next) {
   //   ex:  /cats?filter=ownerId:owner_2222
 
   const filter = pathOr(null, ['query', 'filter'], req)
-
   const lastItem = pathOr(null, ['query', 'lastItem'], req)
 
   dal.listCats(lastItem, filter, limit, function(err, data) {
@@ -164,24 +157,15 @@ app.post('/breeds', function(req, res, next) {
 
   dal
     .addBreed(prop('body', req))
-    .then(function(addedBreed) {
-      res.status(201).send(addedBreed)
-    })
-    .catch(function(err) {
-      return next(new HTTPError(err.status, err.message, err))
-    })
+    .then(addedBreed => res.status(201).send(addedBreed))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 // READ - GET /breeds/:id
 app.get('/breeds/:id', function(req, res, next) {
-  const id = path(['params', 'id'], req)
-  console.log('breed id', id)
-
   dal
-    .getBreed(id)
-    .then(function(breed) {
-      res.status(200).send(breed)
-    })
+    .getBreed(path(['params', 'id'], req))
+    .then(breed => res.status(200).send(breed))
     .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
@@ -229,22 +213,16 @@ app.put('/breeds/:id', function(req, res, next) {
 
   dal
     .updateBreed(requestBodyBreed)
-    .then(function(response) {
-      res.status(200).send(response)
-    })
-    .catch(function(err) {
-      return next(new HTTPError(err.status, err.message, err))
-    })
+    .then(response => res.status(200).send(response))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 // DELETE - DELETE /breeds/:id
 app.delete('/breeds/:id', function(req, res, next) {
-  const id = req.params.id
-  dal.deleteBreed(id, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-
-    res.status(200).send(data)
-  })
+  dal
+    .deleteBreed(path(['params', 'id'], req))
+    .then(deletedBreed => res.status(200).send(deletedBreed))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 //  LIST - GET /breeds

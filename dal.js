@@ -38,6 +38,7 @@ const {
 const add = doc => db.put(doc)
 const get = id => db.get(id)
 const update = doc => db.put(doc)
+const deleteDoc = id => db.get(id).then(doc => db.remove(doc))
 
 //////////////////////
 //      CATS
@@ -49,7 +50,7 @@ const addCat = cat => {
 }
 const getCat = catId => get(catId)
 const updateCat = updatedCat => update(updatedCat)
-const deleteCat = (catId, callback) => deleteDoc(catId, callback)
+const deleteCat = catId => deleteDoc(catId)
 const listCats = (lastItem, filter, limit, callback) => {
   var query = {}
 
@@ -94,7 +95,7 @@ const addBreed = breed => {
 }
 const getBreed = breedId => get(breedId)
 const updateBreed = updatedBreed => update(updatedBreed)
-const deleteBreed = (breedId, callback) => deleteDoc(breedId, callback)
+const deleteBreed = breedId => deleteDoc(breedId)
 
 const listBreeds = (lastItem, limit, callback) => {
   const query = lastItem
@@ -102,44 +103,6 @@ const listBreeds = (lastItem, limit, callback) => {
     : { selector: { _id: { $gt: null }, type: 'breed' }, limit }
 
   findDocs(query, callback)
-}
-
-////////////////////////////
-//    helper functions
-////////////////////////////
-// function list(options, callback) {
-//   db.allDocs(options, function(err, data) {
-//     if (err) callback(err)
-//     callback(null, map(row => row.doc, data.rows))
-//   })
-// }
-
-// function add(doc, callback) {
-//   db.put(doc, function(err, doc) {
-//     if (err) callback(err)
-//     callback(null, doc)
-//   })
-// }
-
-// function update(doc, callback) {
-//   db.put(doc, function(err, doc) {
-//     if (err) callback(err)
-//     callback(null, doc)
-//   })
-// }
-
-function deleteDoc(id, callback) {
-  db
-    .get(id)
-    .then(function(doc) {
-      return db.remove(doc)
-    })
-    .then(function(result) {
-      callback(null, result)
-    })
-    .catch(function(err) {
-      callback(err)
-    })
 }
 
 const findDocs = (query, cb) =>
