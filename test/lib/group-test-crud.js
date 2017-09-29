@@ -1,35 +1,12 @@
 const test = require('tape')
-const request = require('supertest')
-const app = require('../../app.js')
+//const request = require('supertest')
+//const app = require('../../app.js')
 const { merge, compose, append, __, head } = require('ramda')
 const testGet = require('./test-get')
-const testList = require('./test-list')
 const testPut = require('./test-put')
 const testPost = require('./test-post')
 const testDelete = require('./test-delete')
 
-/*
-example call testCrud('BREEDS CRUD TEST',
-  '/breeds',
-  {
-  type: 'breed',
-  breed: 'Maine Coon',
-  desc:
-    'The Maine Coon is one of the largest domesticated breeds of cat. It has a distinctive physical appearance and valuable hunting skills.'
-  },
-  { desc: 'The description has been changed' },
-  'breed_maine_coon'
-)
-
-testList(
-  assert,
-  path,
-  compose(append(__, []), merge(__, { _id: body.id }))(
-    postRequestBody
-  )
-)
-
-*/
 module.exports = (testName, path, postRequestBody, putUpdateData, pk) => {
   return new Promise((resolve, reject) => {
     test(testName, function(assert) {
