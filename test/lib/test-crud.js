@@ -1,8 +1,9 @@
 const test = require('tape')
 const request = require('supertest')
 const app = require('../../app.js')
-const { merge } = require('ramda')
+const { merge, compose, append, __, head } = require('ramda')
 const testGet = require('./test-get')
+const testList = require('./test-list')
 const testPut = require('./test-put')
 const testPost = require('./test-post')
 const testDelete = require('./test-delete')
@@ -18,6 +19,14 @@ example call testCrud('BREEDS CRUD TEST',
   },
   { desc: 'The description has been changed' },
   'breed_maine_coon'
+)
+
+testList(
+  assert,
+  path,
+  compose(append(__, []), merge(__, { _id: body.id }))(
+    postRequestBody
+  )
 )
 
 */

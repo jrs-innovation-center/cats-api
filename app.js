@@ -108,14 +108,12 @@ app.get('/cats', function(req, res, next) {
 
   // TODO: refactor the ownerId filter to a generic filter query string
   //   ex:  /cats?filter=ownerId:owner_2222
-
-  const filter = pathOr(null, ['query', 'filter'], req)
   const lastItem = pathOr(null, ['query', 'lastItem'], req)
 
-  dal.listCats(lastItem, filter, limit, function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(200).send(data)
-  })
+  dal
+    .listCats(lastItem, Number(limit))
+    .then(data => res.status(200).send(data))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 /////////////////////////
@@ -219,10 +217,10 @@ app.get('/breeds', function(req, res, next) {
   const limit = pathOr(10, ['query', 'limit'], req)
   const lastItem = pathOr(null, ['query', 'lastItem'], req)
 
-  dal.listBreeds(lastItem, Number(limit), function(err, data) {
-    if (err) return next(new HTTPError(err.status, err.message, err))
-    res.status(200).send(data)
-  })
+  dal
+    .listBreeds(lastItem, Number(limit))
+    .then(data => res.status(200).send(data))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
 app.use(function(err, req, res, next) {

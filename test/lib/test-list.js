@@ -1,6 +1,6 @@
 const request = require('supertest')
 const app = require('../../app.js')
-const { prop, compose, omit } = require('ramda')
+const { prop, compose, omit, map } = require('ramda')
 
 module.exports = (assert, path, compareResourse) => {
   return new Promise((resolve, reject) => {
@@ -16,9 +16,10 @@ module.exports = (assert, path, compareResourse) => {
         )
         assert.same(
           compareResourse,
-          compose(omit(['_rev']), prop('body'))(res),
+          compose(map(omit(['_rev'])), prop('body'))(res),
           `GET ${path} retrieved expected resource`
         )
+
         resolve(prop('body', res))
       })
       .catch(err => reject(err))

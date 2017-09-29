@@ -51,7 +51,7 @@ const addCat = cat => {
 const getCat = catId => get(catId)
 const updateCat = updatedCat => update(updatedCat)
 const deleteCat = catId => deleteDoc(catId)
-const listCats = (lastItem, filter, limit, callback) => {
+const listCats = (lastItem, limit, filter) => {
   var query = {}
 
   if (filter) {
@@ -82,7 +82,7 @@ const listCats = (lastItem, filter, limit, callback) => {
   }
 
   console.log('query:', query)
-  findDocs(query, callback)
+  return findDocs(query)
 }
 
 //////////////////////
@@ -97,21 +97,15 @@ const getBreed = breedId => get(breedId)
 const updateBreed = updatedBreed => update(updatedBreed)
 const deleteBreed = breedId => deleteDoc(breedId)
 
-const listBreeds = (lastItem, limit, callback) => {
+const listBreeds = (lastItem, limit) => {
   const query = lastItem
     ? { selector: { _id: { $gt: lastItem }, type: 'breed' }, limit }
     : { selector: { _id: { $gt: null }, type: 'breed' }, limit }
 
-  findDocs(query, callback)
+  return findDocs(query)
 }
 
-const findDocs = (query, cb) =>
-  query
-    ? db
-        .find(query)
-        .then(res => cb(null, res.docs))
-        .catch(err => cb(err))
-    : cb(null, [])
+const findDocs = query => (query ? db.find(query).then(res => res.docs) : [])
 
 function nukeDocs(cb) {
   db
