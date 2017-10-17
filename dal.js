@@ -49,41 +49,71 @@ const addCat = cat => {
   return add(cat)
 }
 const getCat = catId => get(catId)
+
 const updateCat = updatedCat => update(updatedCat)
 const deleteCat = catId => deleteDoc(catId)
-const listCats = (lastItem, limit, filter) => {
-  var query = {}
 
+const listCats = (limit, filter, lastItem) =>
+  listDocs(limit, filter, 'cat', lastItem)
+
+const listBreeds = (limit, filter, lastItem) =>
+  listDocs(limit, filter, 'breed', lastItem)
+
+const listDocs = (limit, filter, type, lastItem) => {
+  const selectorValue = {}
   if (filter) {
-    //split "ownerId:owner_2222" into an array of ['ownerId','owner_2222']
-    //arrFilter = ['ownerId','owner_2222']
-    const arrFilter = split(':', filter)
-    const filterField = head(arrFilter)
-    const filterValue = last(arrFilter)
-
-    //   why?  the filter is limiting our records.  no need to paginate
-    const selectorValue = {}
-    selectorValue[filterField] = Number(filterValue)
-      ? Number(filterValue)
-      : filterValue
-
-    // { foo: "bar", name: 'Fatty Butterpants' }
-    // { breedId: 'breed_siamese' }
-    // { ownerId: 'owner_2222' }
-    // { gender: 'M' }
-
-    query = { selector: selectorValue, limit }
+    const filterField = head(split(':', filter)) // "gender"
+    const filterValue = last(split(':', filter)) // "F"
+    selectorValue[filterField] = isNaN(filterValue)
+      ? filterValue
+      : Number(filterValue)
   } else if (lastItem) {
-    // They are asking to paginate.  Give them the next page of results
-    query = { selector: { _id: { $gt: lastItem }, type: 'cat' }, limit }
+    selectorValue._id = { $gt: lastItem }
   } else {
-    // Give the first page of results.
-    query = { selector: { _id: { $gt: null }, type: 'cat' }, limit }
+    selectorValue._id = { $gte: null }
   }
 
-  console.log('query:', query)
-  return findDocs(query)
+  selectorValue.type = type
+  const query = {
+    selector: selectorValue,
+    limit
+  }
+  console.log('query', query)
+  return db.find(query).then(result => result.docs)
 }
+// const listCats = (lastItem, limit, filter) => {
+//   var query = {}
+//
+//   if (filter) {
+//     //split "ownerId:owner_2222" into an array of ['ownerId','owner_2222']
+//     //arrFilter = ['ownerId','owner_2222']
+//     const arrFilter = split(':', filter)
+//     const filterField = head(arrFilter)
+//     const filterValue = last(arrFilter)
+//
+//     //   why?  the filter is limiting our records.  no need to paginate
+//     const selectorValue = {}
+//     selectorValue[filterField] = Number(filterValue)
+//       ? Number(filterValue)
+//       : filterValue
+//
+//     // { foo: "bar", name: 'Fatty Butterpants' }
+//     // { breedId: 'breed_siamese' }
+//     // { ownerId: 'owner_2222' }
+//     // { gender: 'M' }
+//
+//     query = { selector: selectorValue, limit }
+//   } else if (lastItem) {
+//     // They are asking to paginate.  Give them the next page of results
+//     query = { selector: { _id: { $gt: lastItem }, type: 'cat' }, limit }
+//   } else {
+//     // Give the first page of results.
+//     query = { selector: { _id: { $gt: null }, type: 'cat' }, limit }
+//   }
+//
+//   console.log('query:', query)
+//   return findDocs(query)
+// }
 
 //////////////////////
 //      BREEDS
@@ -97,15 +127,15 @@ const getBreed = breedId => get(breedId)
 const updateBreed = updatedBreed => update(updatedBreed)
 const deleteBreed = breedId => deleteDoc(breedId)
 
-const listBreeds = (lastItem, limit) => {
-  const query = lastItem
-    ? { selector: { _id: { $gt: lastItem }, type: 'breed' }, limit }
-    : { selector: { _id: { $gt: null }, type: 'breed' }, limit }
+// const listBreeds = (lastItem, limit) => {
+//   const query = lastItem
+//     ? { selector: { _id: { $gt: lastItem }, type: 'breed' }, limit }
+//     : { selector: { _id: { $gt: null }, type: 'breed' }, limit }
+//
+//   return findDocs(query)
+// }
 
-  return findDocs(query)
-}
-
-const findDocs = query => (query ? db.find(query).then(res => res.docs) : [])
+//const findDocs = query => (query ? db.find(query).then(res => res.docs) : [])
 
 function nukeDocs(cb) {
   db
@@ -131,10 +161,10 @@ function nukeDocs(cb) {
 
 const dal = {
   addCat,
-  listCats,
   getCat,
   deleteCat,
   updateCat,
+  listCats,
   addBreed,
   getBreed,
   updateBreed,

@@ -101,20 +101,49 @@ app.delete('/cats/:id', function(req, res, next) {
     .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
 
-//   LIST - GET /cats
 app.get('/cats', function(req, res, next) {
-  var limit = pathOr(10, ['query', 'limit'], req)
-  limit = Number(limit)
-
-  // TODO: refactor the ownerId filter to a generic filter query string
-  //   ex:  /cats?filter=ownerId:owner_2222
+  const filter = pathOr(null, ['query', 'filter'], req)
   const lastItem = pathOr(null, ['query', 'lastItem'], req)
 
+  var limit = pathOr(3, ['query', 'limit'], req)
+  limit = Number(limit)
+
   dal
-    .listCats(lastItem, Number(limit))
-    .then(data => res.status(200).send(data))
+    .listCats(limit, filter, lastItem)
+    .then(cats => res.status(200).send(cats))
     .catch(err => next(new HTTPError(err.status, err.message, err)))
 })
+
+app.get('/breeds', function(req, res, next) {
+  const filter = pathOr(null, ['query', 'filter'], req)
+  const lastItem = pathOr(null, ['query', 'lastItem'], req)
+  // filter=null  or filter="gender:F"
+
+  var limit = pathOr(3, ['query', 'limit'], req)
+
+  limit = Number(limit)
+  //const limit = compose(Number, pathOr(3, ['query', 'limit']))(req)
+
+  dal
+    .listBreeds(limit, filter, lastItem)
+    .then(cats => res.status(200).send(cats))
+    .catch(err => next(new HTTPError(err.status, err.message, err)))
+})
+
+//   LIST - GET /cats
+// app.get('/cats', function(req, res, next) {
+//   var limit = pathOr(10, ['query', 'limit'], req)
+//   limit = Number(limit)
+//
+//   // TODO: refactor the ownerId filter to a generic filter query string
+//   //   ex:  /cats?filter=ownerId:owner_2222
+//   const lastItem = pathOr(null, ['query', 'lastItem'], req)
+//
+//   dal
+//     .listCats(lastItem, Number(limit))
+//     .then(data => res.status(200).send(data))
+//     .catch(err => next(new HTTPError(err.status, err.message, err)))
+// })
 
 /////////////////////////
 //      BREEDS
@@ -213,15 +242,15 @@ app.delete('/breeds/:id', function(req, res, next) {
 })
 
 //  LIST - GET /breeds
-app.get('/breeds', function(req, res, next) {
-  const limit = pathOr(10, ['query', 'limit'], req)
-  const lastItem = pathOr(null, ['query', 'lastItem'], req)
-
-  dal
-    .listBreeds(lastItem, Number(limit))
-    .then(data => res.status(200).send(data))
-    .catch(err => next(new HTTPError(err.status, err.message, err)))
-})
+// app.get('/breeds', function(req, res, next) {
+//   const limit = pathOr(10, ['query', 'limit'], req)
+//   const lastItem = pathOr(null, ['query', 'lastItem'], req)
+//
+//   dal
+//     .listBreeds(lastItem, Number(limit))
+//     .then(data => res.status(200).send(data))
+//     .catch(err => next(new HTTPError(err.status, err.message, err)))
+// })
 
 app.use(function(err, req, res, next) {
   console.log(req.method, ' ', req.path, ' ', 'error: ', err)
