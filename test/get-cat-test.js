@@ -11,11 +11,11 @@ test('GET /cats/:id', t => {
 			t.equal(res.body.name, 'Fatty Butterpants')
 			t.same(res.body, {
 				_id: 'cat_fatty_butterpants_owner_2222',
-				_rev: '1-8842294851e253655045b6b401fcd5d0',
+				_rev: '4-a5434c0d3f44519302928ab539420cb1',
 				type: 'cat',
 				name: 'Fatty Butterpants',
 				ownerId: 'owner_2222',
-				weightLbs: 22,
+				weightLbs: 23,
 				breedId: 'breed_tabby',
 				gender: 'M'
 			})
