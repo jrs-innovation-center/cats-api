@@ -1,26 +1,16 @@
-const add = (x, y) => {
-  return new Promise((resolve, reject) => {
-    if (x < y) {
-      resolve(x + y)
-    } else {
-      reject('add error x has to be less than y')
-    }
-  })
-}
+const add = (x, y) =>
+  new Promise(
+    (resolve, reject) =>
+      x < y ? resolve(x + y) : reject('add error x has to be less than y')
+  )
 
-const subtract = (x, y) => {
-  return new Promise((resolve, reject) => {
-    if (x < y) {
-      resolve(x - y)
-    } else {
-      reject('subtract error! x has to be less than y')
-    }
-  })
-}
+const subtract = (x, y) =>
+  new Promise(
+    (resolve, reject) =>
+      x < y ? resolve(x - y) : reject('subtract error! x has to be less than y')
+  )
 
-const math = {
+module.exports = {
   add,
   subtract
 }
-
-module.exports = math
