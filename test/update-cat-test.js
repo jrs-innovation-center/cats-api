@@ -7,11 +7,11 @@ const { isEmpty, head } = require('ramda')
 
 const updateCat = {
 	_id: 'cat_fluffikins_owner_1234',
-	_rev: '2-ab87af221ce93867c5146816c5d5b09f',
+	_rev: '8-35aba4890a29fe15cd15e04e229e1692',
 	type: 'cat',
 	name: 'fluffikins',
 	ownerId: 'owner_1234',
-	weightLbs: 10,
+	weightLbs: 4,
 	breedId: 'breed_siamese'
 }
 
