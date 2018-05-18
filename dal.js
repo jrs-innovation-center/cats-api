@@ -1,9 +1,21 @@
-require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-find'))
 
-const db = new PouchDB(process.env.COUCHDB_URL)
+let dburl = null
+
+if (process.env.NODE_ENV === 'test') {
+  console.log('***TEST MODE***')
+  dburl = process.env.COUCHDB_URL_TEST
+  console.log('Our COUCHDB_URL_TEST value is', dburl)
+} else {
+  dburl = process.env.COUCHDB_URL
+}
+
+const db = new PouchDB(process.env.dburl)
 const pkGenerator = require('./lib/build-pk')
 const {
   append,
